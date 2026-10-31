@@ -1,10 +1,14 @@
-.recallify-overlay-root {
+/* Defaults live on the host so the user's settings, applied to a wrapper inside the
+   shadow root, can override them. On .recallify-overlay-root itself they'd always win. */
+:host {
   --recallify-accent: #7c3aed;
   --recallify-accent-dark: #1f2937;
   --recallify-popover-width: 420px;
   --recallify-font-size: 15px;
   --recallify-radius: 12px;
+}
 
+.recallify-overlay-root {
   position: fixed;
   top: 0;
   left: 0;
@@ -49,6 +53,93 @@
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
   padding: 20px;
   transform: translate(-50%, 10px);
+}
+
+/* Drag bar along the top edge, inside the popover's padding so layout is unchanged. */
+.recallify-popover-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.recallify-popover-handle::before {
+  content: '';
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: #d1d5db;
+}
+
+.recallify-popover-handle:hover::before,
+.recallify-popover.is-dragging .recallify-popover-handle::before {
+  background: var(--recallify-accent);
+}
+
+.recallify-popover.is-dragging,
+.recallify-popover.is-dragging .recallify-popover-handle {
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* Resize grip in the bottom-right corner, also inside the padding. */
+.recallify-popover-grip {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  touch-action: none;
+  user-select: none;
+  background: linear-gradient(
+    135deg,
+    transparent 0 48%,
+    #9ca3af 48% 56%,
+    transparent 56% 70%,
+    #9ca3af 70% 78%,
+    transparent 78%
+  );
+}
+
+.recallify-popover-grip:hover {
+  filter: brightness(0.8);
+}
+
+/* Once resized, the popover has a fixed box and the note area soaks up the extra room. */
+.recallify-popover.is-sized {
+  box-sizing: border-box;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.recallify-popover.is-sized {
+  overflow: hidden;
+}
+
+.recallify-popover.is-sized > * {
+  flex-shrink: 0;
+}
+
+/* The quote is the one block that gives way when the popover is made shorter. */
+.recallify-popover.is-sized > .recallify-popover-quote {
+  flex-shrink: 1;
+  min-height: 44px;
+}
+
+.recallify-popover.is-sized .recallify-popover-grow {
+  flex: 1 1 0;
+  min-height: 60px;
+  max-height: none;
+  resize: none;
 }
 
 .recallify-popover-label {
@@ -123,7 +214,7 @@
 
 .recallify-popover textarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 96px;
   resize: vertical;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -171,4 +262,164 @@
 .recallify-popover-actions .danger {
   background: #fee2e2;
   color: #b91c1c;
+}
+
+/* Note tools */
+.recallify-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  margin-top: 10px;
+}
+
+.recallify-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #4b5563;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.recallify-tool:hover:not(:disabled) {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.recallify-tool:focus-visible {
+  outline: 2px solid var(--recallify-accent);
+  outline-offset: 1px;
+}
+
+.recallify-tool:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.recallify-tool.active {
+  color: var(--recallify-accent);
+  background: color-mix(in srgb, var(--recallify-accent) 12%, transparent);
+}
+
+.recallify-tool.active .recallify-fill-when-active {
+  fill: currentColor;
+}
+
+.recallify-tool-divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: #e5e7eb;
+}
+
+.recallify-tools-status {
+  min-height: 14px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.recallify-tools-help {
+  display: grid;
+  gap: 2px;
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f3f4f6;
+  font-size: 12px;
+}
+
+.recallify-tools-help div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recallify-tools-help dt {
+  font-weight: 600;
+}
+
+.recallify-tools-help dd {
+  margin: 0;
+  color: #6b7280;
+}
+
+/* Dark theme, switched by the moon/sun tool. */
+[data-theme='dark'] .recallify-popover {
+  background: #1f2937;
+  color: #e5e7eb;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme='dark'] .recallify-popover-quote {
+  background: color-mix(in srgb, var(--recallify-accent) 22%, #1f2937);
+}
+
+[data-theme='dark'] .recallify-popover-note {
+  background: #064e3b;
+  border-left-color: #10b981;
+  color: #d1fae5;
+}
+
+[data-theme='dark'] .recallify-popover textarea,
+[data-theme='dark'] .recallify-category-input {
+  background: #111827;
+  border-color: #374151;
+  color: #f3f4f6;
+}
+
+[data-theme='dark'] .recallify-popover textarea::placeholder {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .recallify-category-chip {
+  background: #111827;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+[data-theme='dark'] .recallify-popover-actions .secondary {
+  background: #374151;
+  color: #f9fafb;
+}
+
+[data-theme='dark'] .recallify-popover-actions .danger {
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+[data-theme='dark'] .recallify-popover-handle::before {
+  background: #4b5563;
+}
+
+[data-theme='dark'] .recallify-tool {
+  color: #d1d5db;
+}
+
+[data-theme='dark'] .recallify-tool:hover:not(:disabled) {
+  background: #374151;
+  color: #fff;
+}
+
+[data-theme='dark'] .recallify-tool-divider {
+  background: #374151;
+}
+
+[data-theme='dark'] .recallify-tools-help {
+  background: #111827;
+}
+
+[data-theme='dark'] .recallify-tools-status,
+[data-theme='dark'] .recallify-tools-help dd {
+  color: #9ca3af;
 }

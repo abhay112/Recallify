@@ -39,6 +39,9 @@ popover width, font size, highlight strength).
 - It does not send your data to any server run by the developers.
 - It does not make network requests of its own. It does not load remote code,
   fonts, images or favicons.
+- The note toolbar works locally. Paste reads the clipboard only when you press
+  it, Copy and Download write only what you chose, and Read aloud uses the
+  voices already on your device. Nothing from these tools leaves your browser.
 - It does not collect analytics or usage statistics, show ads, or sell or share
   data with third parties.
 

@@ -23,6 +23,8 @@ export interface Memory {
   /** User's last recall attempt, for hide mode */
   recallAttempt?: string
   revealed?: boolean
+  /** Marked as a favourite. Absent on memories saved before this existed. */
+  starred?: boolean
   createdAt: number
   updatedAt: number
 }
@@ -39,11 +41,11 @@ export type NewMemoryInput = Pick<
   | 'contextAfter'
   | 'note'
   | 'categoryId'
+  | 'starred'
 >
 
 export interface ContentToBackgroundMessage {
-  type: 'memory:created' | 'memory:updated' | 'memory:deleted'
-  memoryId: string
+  type: 'recallify:open-dashboard'
 }
 
 export interface SelectionContext {
@@ -58,6 +60,7 @@ export interface RecallifySettings {
   popoverWidth: number
   fontSize: number
   highlightOpacity: number
+  popoverTheme: 'light' | 'dark'
 }
 
 export const DEFAULT_SETTINGS: RecallifySettings = {
@@ -65,4 +68,5 @@ export const DEFAULT_SETTINGS: RecallifySettings = {
   popoverWidth: 420,
   fontSize: 15,
   highlightOpacity: 0.18,
+  popoverTheme: 'light',
 }

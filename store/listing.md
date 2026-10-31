@@ -21,10 +21,12 @@ Select text on any web page and choose what to do with it:
 
 • Hide & Remember — replace the passage with a blank. Click it, type what you remember, then check yourself against the original.
 
+The note window is draggable and resizable, with a toolbar for copy/paste, undo/redo, spellcheck, text size, read aloud, download as text, starring and a dark theme.
+
 Then use the dashboard to:
 
 • Search and filter everything you've saved, across all sites
-• Organise memories with categories
+• Organise memories with categories and stars
 • Run a shuffled practice session over everything you've hidden
 • Customise the accent colour, popover size, font size and highlight strength
 

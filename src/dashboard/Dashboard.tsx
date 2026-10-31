@@ -24,6 +24,7 @@ export function Dashboard() {
   const [modeFilter, setModeFilter] = useState<ModeFilter>('all')
   const [domainFilter, setDomainFilter] = useState<string>('all')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
+  const [starredOnly, setStarredOnly] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState('')
   const [editCategoryId, setEditCategoryId] = useState<string | undefined>(undefined)
@@ -59,6 +60,7 @@ export function Dashboard() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return memories.filter((m) => {
+      if (starredOnly && !m.starred) return false
       if (modeFilter !== 'all' && m.mode !== modeFilter) return false
       if (domainFilter !== 'all' && m.domain !== domainFilter) return false
       if (categoryFilter !== 'all') {
@@ -71,7 +73,7 @@ export function Dashboard() {
         m.pageTitle.toLowerCase().includes(q)
       )
     })
-  }, [memories, query, modeFilter, domainFilter, categoryFilter])
+  }, [memories, query, modeFilter, domainFilter, categoryFilter, starredOnly])
 
   const handleDelete = async (id: string) => {
     await deleteMemory(id)
@@ -182,13 +184,20 @@ export function Dashboard() {
             <option value="inline">Notes</option>
             <option value="hide">Hidden &amp; recall</option>
           </select>
+          <button
+            className={`category-pill ${starredOnly ? 'active' : ''}`}
+            aria-pressed={starredOnly}
+            onClick={() => setStarredOnly((v) => !v)}
+          >
+            ★ Starred
+          </button>
         </div>
       </div>
 
-      {(domainFilter !== 'all' || categoryFilter !== 'all' || modeFilter !== 'all' || query.trim()) && (
+      {(domainFilter !== 'all' || categoryFilter !== 'all' || modeFilter !== 'all' || starredOnly || query.trim()) && (
         <div className="active-filters">
           Showing {filtered.length} of {memories.length}
-          <button className="link-btn" onClick={() => { setDomainFilter('all'); setCategoryFilter('all'); setModeFilter('all'); setQuery('') }}>
+          <button className="link-btn" onClick={() => { setDomainFilter('all'); setCategoryFilter('all'); setModeFilter('all'); setStarredOnly(false); setQuery('') }}>
             Clear all filters
           </button>
         </div>
@@ -206,6 +215,14 @@ export function Dashboard() {
                 {category && (
                   <span className="category-tag" style={{ background: category.color }}>{category.name}</span>
                 )}
+                <button
+                  className={`card-star ${m.starred ? 'on' : ''}`}
+                  aria-pressed={!!m.starred}
+                  title={m.starred ? 'Remove star' : 'Star this memory'}
+                  onClick={() => void updateMemory(m.id, { starred: !m.starred })}
+                >
+                  {m.starred ? '★' : '☆'}
+                </button>
                 <button className="card-domain" title="Filter by this site" onClick={() => setDomainFilter(m.domain)}>
                   {m.domain}
                 </button>

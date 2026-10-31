@@ -8,8 +8,15 @@ there is no Recallify server or account. See [PRIVACY.md](PRIVACY.md).
 
 - **Remember** — select text, write your own explanation, and it stays highlighted
   on the page for next time. Click the highlight to reread your note.
+- **Note editor** — the note window can be dragged by its top bar and resized from
+  its corner. Its toolbar has cut, copy, paste, select all, clear, undo/redo,
+  spellcheck, text size, change case, read aloud, copy with source, download as
+  `.txt`, star, light/dark theme, a shortcuts list, and a link to the dashboard.
+  Ctrl/⌘+Enter saves.
 - **Hide & Remember** — select text, it's replaced with a `🧠 recall?` blank.
   Click it, type what you remember, and check yourself against the original.
+- **Starred** — star any memory (in the note window or on the dashboard) and
+  filter the dashboard down to starred ones.
 - **Dashboard** — search and filter every memory you've saved across all sites,
   edit notes, and run a shuffled practice session over everything you've hidden.
 - **Context menu** — right-click selected text as an alternative to the floating

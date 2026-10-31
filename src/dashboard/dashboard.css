@@ -531,3 +531,21 @@ select {
 .practice-summary h3 {
   margin-top: 0;
 }
+
+.card-star {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.card-star.on {
+  color: #f59e0b;
+}
+
+.card-star:hover {
+  color: #f59e0b;
+}

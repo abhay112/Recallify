@@ -7,12 +7,13 @@ import { applyInlineMark, applyHideMark, restoreMemoriesOnPage } from './marks'
 import { captureCurrentSelection, normalizeUrl, getDomain } from '@/lib/anchor'
 import { addMemory, deleteMemory, getMemoriesForUrl, updateMemory } from '@/lib/storage'
 import { getSettings, onSettingsChanged } from '@/lib/settings'
-import type { Memory, RecallifySettings, SelectionContext } from '@/lib/types'
+import type { ContentToBackgroundMessage, Memory, RecallifySettings, SelectionContext } from '@/lib/types'
 
 function applySettingsToOverlay(root: HTMLElement, settings: RecallifySettings) {
   root.style.setProperty('--recallify-accent', settings.accentColor)
   root.style.setProperty('--recallify-popover-width', `${settings.popoverWidth}px`)
   root.style.setProperty('--recallify-font-size', `${settings.fontSize}px`)
+  root.dataset.theme = settings.popoverTheme
 }
 
 type OverlayState =
@@ -139,7 +140,7 @@ function App() {
     close()
   }
 
-  const handleSaveNote = async (note: string, categoryId: string | undefined) => {
+  const handleSaveNote = async (note: string, categoryId: string | undefined, starred: boolean) => {
     if (state.mode !== 'editor') return
     const { selection } = state
     const memory = await addMemory({
@@ -153,6 +154,7 @@ function App() {
       contextAfter: selection.contextAfter,
       note,
       categoryId,
+      starred,
     })
     try {
       applyInlineMark(selection.range, memory, (m) => openNoteViewer(m, setState))
@@ -162,9 +164,18 @@ function App() {
     close()
   }
 
-  const handleUpdateNote = async (memory: Memory, note: string, categoryId: string | undefined) => {
-    await updateMemory(memory.id, { note, categoryId })
+  const handleUpdateNote = async (memory: Memory, note: string, categoryId: string | undefined, starred: boolean) => {
+    await updateMemory(memory.id, { note, categoryId, starred })
     close()
+  }
+
+  const handleStarChange = (memory: Memory, starred: boolean) => {
+    void updateMemory(memory.id, { starred })
+  }
+
+  const handleOpenDashboard = () => {
+    const message: ContentToBackgroundMessage = { type: 'recallify:open-dashboard' }
+    void chrome.runtime.sendMessage(message)
   }
 
   const handleDeleteNote = async (memory: Memory) => {
@@ -178,9 +189,11 @@ function App() {
       state={state}
       onRemember={handleRemember}
       onHide={(selection) => void handleHide(selection)}
-      onSaveNote={(note, categoryId) => void handleSaveNote(note, categoryId)}
-      onUpdateNote={(memory, note, categoryId) => void handleUpdateNote(memory, note, categoryId)}
+      onSaveNote={(note, categoryId, starred) => void handleSaveNote(note, categoryId, starred)}
+      onUpdateNote={(memory, note, categoryId, starred) => void handleUpdateNote(memory, note, categoryId, starred)}
+      onStarChange={handleStarChange}
       onDeleteNote={(memory) => void handleDeleteNote(memory)}
+      onOpenDashboard={handleOpenDashboard}
       onClose={close}
     />
   )
