@@ -1,17 +1,58 @@
-node_modules
-dist
-dist_zip
-coverage
-*.local
-.DS_Store
-*.log
+# Dependencies
+node_modules/
+
+# Build output and release artifacts
+/dist/
+/dist_zip/
+*.zip
+*.tgz
+
+# Chrome extension signing keys. A leaked .pem can't be revoked, so never commit one.
+*.pem
+*.crx
+
+# Tests, caches and tool output
+/coverage/
+.vitest/
+.vite/
+.cache/
+.eslintcache
 *.tsbuildinfo
 
-# Config files are TypeScript-only. If tsc ever emits these next to the sources,
-# Vite would load the stale .js before the .ts, so keep them out of git.
+# TypeScript emits. The config files are TypeScript-only. If tsc ever writes these
+# next to the sources, Vite would load the stale .js before the .ts.
 /vite.config.js
 /vite.config.d.ts
 /vitest.config.js
 /vitest.config.d.ts
 /manifest.config.js
 /manifest.config.d.ts
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local Claude Code config (remove this line to share project settings)
+.claude/
