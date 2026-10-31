@@ -36,9 +36,14 @@ src/
 ### How memories survive page reloads
 
 Each memory stores the selected text plus ~40 characters of context before and
-after it (`src/lib/anchor.ts`). On reload, the content script re-locates the
-same text by scanning the page's text nodes and, if the text appears more than
-once, picks the occurrence whose surrounding context matches best.
+after the selection itself (`src/lib/anchor.ts`). On reload, the content script
+re-locates the same text by scanning the page's text nodes and, if the text
+appears more than once, picks the occurrence whose surrounding context matches
+best.
+
+Matching ignores whitespace and letter case, so it still finds text that wraps
+across source lines, spans paragraphs or inline tags, or is restyled with CSS
+`text-transform`.
 
 ## Development
 
@@ -53,6 +58,16 @@ Then in Chrome:
 2. Enable **Developer mode**
 3. Click **Load unpacked** and select the `dist` folder (first run `npm run build`,
    or point at the dev server's output per CRXJS's HMR setup)
+
+### Checks
+
+```bash
+npm run lint        # ESLint
+npm run typecheck   # tsc for the extension and the build config
+npm test            # Vitest (jsdom)
+```
+
+CI runs the same checks plus a production build on every push and pull request.
 
 ## Production build
 
@@ -71,4 +86,7 @@ to the Chrome Web Store.
 - No cross-device sync yet — memories live in `chrome.storage.local` on one
   browser profile.
 - No PDF or `file://` support in this permission set.
-# Recallify
+
+## License
+
+[MIT](LICENSE)

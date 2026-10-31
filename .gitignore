@@ -1,0 +1,17 @@
+node_modules
+dist
+dist_zip
+coverage
+*.local
+.DS_Store
+*.log
+*.tsbuildinfo
+
+# Config files are TypeScript-only. If tsc ever emits these next to the sources,
+# Vite would load the stale .js before the .ts, so keep them out of git.
+/vite.config.js
+/vite.config.d.ts
+/vitest.config.js
+/vitest.config.d.ts
+/manifest.config.js
+/manifest.config.d.ts
