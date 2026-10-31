@@ -31,7 +31,8 @@ export default defineManifest({
       run_at: 'document_idle',
     },
   ],
-  permissions: ['storage', 'activeTab', 'scripting', 'contextMenus'],
-  host_permissions: ['http://*/*', 'https://*/*'],
+  // activeTab lets the popup read the current tab's URL and title when opened;
+  // the content script's `matches` is all the page access the rest needs.
+  permissions: ['storage', 'activeTab', 'contextMenus'],
   options_page: 'src/dashboard/index.html',
 })

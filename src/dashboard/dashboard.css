@@ -211,9 +211,17 @@ body {
 }
 
 .site-favicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
   width: 14px;
   height: 14px;
   border-radius: 3px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .active-filters {

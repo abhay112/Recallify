@@ -1,7 +1,8 @@
 # Recallify
 
 Select text anywhere on the web. Save your own explanation next to it, or hide it
-and practice active recall later. Everything is stored locally in your browser.
+and practice active recall later. Your memories are stored in your browser —
+there is no Recallify server or account. See [PRIVACY.md](PRIVACY.md).
 
 ## Features
 
@@ -13,12 +14,16 @@ and practice active recall later. Everything is stored locally in your browser.
   edit notes, and run a shuffled practice session over everything you've hidden.
 - **Context menu** — right-click selected text as an alternative to the floating
   toolbar.
+- **Sync (optional, off by default)** — turn it on in the dashboard's Appearance
+  panel to sync memories through Chrome's built-in sync (your Google account).
 
 ## Tech stack
 
 - React + TypeScript + Vite
 - `@crxjs/vite-plugin` for Manifest V3 bundling (with HMR in dev)
-- `chrome.storage.local` for all persistence — no backend, no accounts
+- `chrome.storage.local` for persistence, plus `chrome.storage.sync` if you turn on
+  sync — no backend, no accounts, and the extension makes no network requests of
+  its own
 
 ## Project layout
 
@@ -83,8 +88,14 @@ to the Chrome Web Store.
 - Text anchoring is best-effort; heavily dynamic pages (infinite scroll,
   client-rendered content that changes after load) may not always restore
   highlights.
-- No cross-device sync yet — memories live in `chrome.storage.local` on one
-  browser profile.
+- Sync rides on Chrome's built-in sync, which has small quotas (about 100 KB in
+  total and 8 KB per item). Very long notes, and anything beyond the quota, stay on
+  the device they were saved on. Only memories sync; categories and appearance
+  settings stay on each device.
+- Sync is best-effort: if two devices save memories at nearly the same moment, one
+  of them can go missing.
+- Memories live in your browser profile, and there is no export or backup yet.
+  Uninstalling the extension deletes them.
 - No PDF or `file://` support in this permission set.
 
 ## License

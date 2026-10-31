@@ -13,6 +13,7 @@ import type { Category, Memory, MemoryMode } from '@/lib/types'
 import { Practice } from './Practice'
 import { Settings } from './Settings'
 import { CategorySelect } from './CategorySelect'
+import { SiteIcon } from './SiteIcon'
 
 type ModeFilter = 'all' | MemoryMode
 
@@ -127,7 +128,7 @@ export function Dashboard() {
                 className={`category-pill site-pill ${domainFilter === domain ? 'active' : ''}`}
                 onClick={() => setDomainFilter(domain)}
               >
-                <img className="site-favicon" src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt="" />
+                <SiteIcon domain={domain} />
                 {domain} ({count})
               </button>
             ))}
