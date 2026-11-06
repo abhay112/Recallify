@@ -67,7 +67,7 @@ Suggested answers, based on what the code does today:
 - [ ] At least one screenshot, 1280×800 or 640×400 (up to five). Good shots: the selection toolbar, a note popover, a hidden passage, and the dashboard.
 - [ ] A 128×128 store icon. The current `public/icons/icon128.png` is a flat purple square, so replace it before submitting.
 - [ ] Optional small promo tile, 440×280.
-- [ ] Contact details in `PRIVACY.md`.
+- [x] Contact details in `PRIVACY.md`.
 
 ## Submitting
 

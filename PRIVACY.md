@@ -80,4 +80,4 @@ new effective date.
 
 ## Contact
 
-[Add your repository URL or contact email here before publishing.]
+Questions or concerns: open an issue at https://github.com/abhay112/Recallify/issues
