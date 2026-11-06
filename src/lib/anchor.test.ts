@@ -179,16 +179,39 @@ describe('captureCurrentSelection', () => {
     expect(restored.toString()).toBe('Paris is the capital of France.')
   })
 
-  it('round-trips a selection that spans paragraphs', () => {
-    document.body.innerHTML = `<p id="c1">First paragraph ends here.</p><p id="c2">Second paragraph starts here.</p>`
-    select(textOf('c1'), 6, textOf('c2'), 6)
+  it('trims a triple-click selection that ends at the start of the next block', () => {
+    document.body.innerHTML = `<p id="a">First paragraph.</p><p id="b">Second paragraph.</p>`
+    const range = document.createRange()
+    range.setStart(textOf('a'), 0)
+    range.setEnd(document.getElementById('b')!, 0)
+    const selection = window.getSelection()!
+    selection.removeAllRanges()
+    selection.addRange(range)
+
     const captured = captureCurrentSelection()!
 
-    const restored = locateRange(captured.selectedText, captured.contextBefore, captured.contextAfter)
+    expect(captured.selectedText).toBe('First paragraph.')
+    expect(captured.range.endContainer).toBe(textOf('a'))
+    expect(captured.range.endOffset).toBe('First paragraph.'.length)
+  })
 
-    expect(restored).not.toBeNull()
-    expect(hostId(restored!.startContainer)).toBe('c1')
-    expect(hostId(restored!.endContainer)).toBe('c2')
+  it('keeps a selection that spans paragraphs inside the first one', () => {
+    document.body.innerHTML = `<p id="c1">First paragraph ends here.</p><p id="c2">Second paragraph starts here.</p>`
+    select(textOf('c1'), 6, textOf('c2'), 6)
+
+    const captured = captureCurrentSelection()!
+    const restored = locateRange(captured.selectedText, captured.contextBefore, captured.contextAfter)!
+
+    expect(captured.selectedText).toBe('paragraph ends here.')
+    expect(hostId(restored.startContainer)).toBe('c1')
+    expect(hostId(restored.endContainer)).toBe('c1')
+  })
+
+  it('still spans inline elements within one block', () => {
+    document.body.innerHTML = `<p id="d">Plain <b id="bold">bold</b> text</p>`
+    select(textOf('d'), 0, document.getElementById('d')!.lastChild as Text, 5)
+
+    expect(captureCurrentSelection()!.selectedText).toBe('Plain bold text')
   })
 })
 

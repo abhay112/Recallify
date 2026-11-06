@@ -119,14 +119,61 @@ function captureContext(range: Range): { contextBefore: string; contextAfter: st
   }
 }
 
+const BLOCK_TAGS = new Set([
+  'P', 'DIV', 'LI', 'UL', 'OL', 'DL', 'DT', 'DD', 'TD', 'TH', 'TR', 'TABLE', 'BLOCKQUOTE', 'PRE',
+  'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'SECTION', 'ARTICLE', 'ASIDE', 'HEADER', 'FOOTER', 'MAIN',
+  'NAV', 'FIGURE', 'FIGCAPTION', 'BODY',
+])
+
+function blockOf(node: Node): Element | null {
+  let el = node.parentElement
+  while (el && !BLOCK_TAGS.has(el.tagName)) el = el.parentElement
+  return el
+}
+
+/**
+ * Pulls a range's edges onto the text it really covers, and keeps it inside one block.
+ *
+ * Triple-clicking a paragraph selects up to the *start of the next block*, and wrapping
+ * such a range in an inline element splits block elements apart. Likewise a drag across
+ * several paragraphs can't be wrapped in a single inline element. So the range is
+ * trimmed to its first and last text, and cut off at the end of the first block if it
+ * would otherwise cross into another one.
+ */
+function tightenRange(range: Range): Range | null {
+  const covered: { node: Text; start: number; end: number }[] = []
+  for (const node of textNodesIn(document.body)) {
+    if (!range.intersectsNode(node)) continue
+    const start = node === range.startContainer ? range.startOffset : 0
+    const end = node === range.endContainer ? range.endOffset : node.data.length
+    if (end > start && node.data.slice(start, end).trim()) covered.push({ node, start, end })
+  }
+  if (covered.length === 0) return null
+
+  const first = covered[0]
+  const block = blockOf(first.node)
+  let last = first
+  for (const part of covered) {
+    if (blockOf(part.node) !== block) break
+    last = part
+  }
+
+  const tight = document.createRange()
+  tight.setStart(first.node, first.start)
+  tight.setEnd(last.node, last.end)
+  return tight
+}
+
 /** Builds selection + surrounding context from the current window selection, if any. */
 export function captureCurrentSelection(): SelectionContext | null {
   const selection = window.getSelection()
   if (!selection || selection.isCollapsed || selection.rangeCount === 0 || !document.body) return null
-  const selectedText = collapseWhitespace(selection.toString())
+
+  const range = tightenRange(selection.getRangeAt(0))
+  if (!range) return null
+  const selectedText = collapseWhitespace(range.toString())
   if (!selectedText) return null
 
-  const range = selection.getRangeAt(0).cloneRange()
   return { selectedText, ...captureContext(range), range }
 }
 

@@ -64,7 +64,7 @@ Suggested answers, based on what the code does today:
 
 ## Assets you need to provide
 
-- [ ] At least one screenshot, 1280×800 or 640×400 (up to five). Good shots: the selection toolbar, a note popover, a hidden passage, and the dashboard.
+- [x] Screenshots (1280×800) are in `store/screenshots/`.
 - [x] A 128×128 store icon (`public/icons/icon128.png`).
 - [ ] Optional small promo tile, 440×280.
 - [x] Contact details in `PRIVACY.md`.
